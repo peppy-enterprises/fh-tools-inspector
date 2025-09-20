@@ -1,4 +1,6 @@
-﻿using System;
+﻿// SPDX-License-Identifier: MIT
+
+using System;
 using System.CommandLine;
 using System.Diagnostics;
 using System.IO;
@@ -39,9 +41,9 @@ internal sealed class Program {
                 continue;
             }
 
-            Console.WriteLine(type.FullName);
             TypeLayout layout = TypeLayout.GetLayout(type);
 
+            writer.Log(type.FullName ?? string.Empty);
             writer.Log(layout.ToString(true));
         }
 
