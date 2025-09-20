@@ -31,14 +31,6 @@
         <None Include="$(SolutionDir).editorconfig" Link=".editorconfig" />
     </ItemGroup>
 
-    <!-- PROJECT REFERENCES -->
-    <ItemGroup>
-        <ProjectReference Include="..\..\base\core\Fahrenheit.Core.csproj">
-            <ExcludeAssets Condition="'$(Configuration)'=='Release'">runtime;native</ExcludeAssets>
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        </ProjectReference>
-    </ItemGroup>
-
     <!-- EXTERNAL PROJECT REFS -->
     <ItemGroup>
         <PackageReference Include="ObjectLayoutInspector" Version="0.1.4" />
