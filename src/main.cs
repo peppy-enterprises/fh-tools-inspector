@@ -27,19 +27,12 @@ public class FhInspectorWriter {
 
 internal sealed class Program {
 
-    private static Assembly _load_assembly_current_dir(string assembly_name) {
-        string   fhcore_path = Path.Join(Directory.GetCurrentDirectory(), assembly_name);
-        Assembly fhcore      = AssemblyLoadContext.Default.LoadFromAssemblyPath(fhcore_path);
-
-        return fhcore;
-    }
-
-    private static void _inspect(string dest_path) {
+    private static void _inspect(string target_path, string dest_path) {
         Stopwatch         perf   = Stopwatch.StartNew();
         FhInspectorWriter writer = new FhInspectorWriter(dest_path);
-        Assembly          fhcore = _load_assembly_current_dir("fhcore.dll");
+        Assembly          target = AssemblyLoadContext.Default.LoadFromAssemblyPath(target_path);
 
-        foreach (Type type in fhcore.GetExportedTypes()) {
+        foreach (Type type in target.GetExportedTypes()) {
             // We ignore classes, delegates, and such.
             if (!type.IsValueType) {
                 Console.WriteLine($"Skipped type {type.FullName}.");
@@ -56,20 +49,28 @@ internal sealed class Program {
     }
 
     private static void Main(string[] args) {
-        Option<string> opt_dest_path  = new Option<string>("--dest") {
+        Option<string> opt_tgt_path = new Option<string>("--target") {
+            Description = "The path to the DLL Inspector should evaluate.",
+            Required    = true
+        };
+        Option<string> opt_dest_path = new Option<string>("--dest") {
             Description = "Set the folder where the Inspector output file should be written.",
             Required    = true
         };
 
-        RootCommand root_cmd = new RootCommand("Inspects the layout of all structures in the Fahrenheit core library and dumps them to disk.") {
+        RootCommand root_cmd = new RootCommand("Inspects the layout of all structures in a .NET library and dumps them to disk.") {
+            opt_tgt_path,
             opt_dest_path,
         };
 
         ParseResult argparse_result = root_cmd.Parse(args);
 
-        string dest_path      = argparse_result.GetValue(opt_dest_path) ?? "";
-        string dest_file_path = Path.Join(dest_path, $"inspector-{Guid.NewGuid()}.txt");
+        string tgt_path_raw  = argparse_result.GetValue(opt_tgt_path)!;
+        string dest_path_raw = argparse_result.GetValue(opt_dest_path)!;
 
-        _inspect(dest_file_path);
+        string tgt_path  = Path.GetFullPath(tgt_path_raw);
+        string dest_path = Path.Join(dest_path_raw, $"inspector-{Guid.NewGuid()}.txt");
+
+        _inspect(tgt_path, dest_path);
     }
 }
