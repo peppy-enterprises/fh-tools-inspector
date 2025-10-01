@@ -20,6 +20,7 @@
     <!-- PUBLISH SETTINGS -->
     <PropertyGroup>
         <PublishSingleFile>true</PublishSingleFile>
+        <SelfContained>false</SelfContained>
     </PropertyGroup>
 
     <!-- SDK REFERENCES -->
